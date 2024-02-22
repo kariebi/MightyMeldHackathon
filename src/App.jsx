@@ -21,7 +21,6 @@ function App() {
 
   return (
     <>
-      <navbar className="flex justify-between items-center w-full h-16 bg-blue-500 text-white px-6 fixed top-0 left-0 z-50"></navbar>
       <div className="flex justify-center items-center w-screen h-screen">
         {gameState === "start" && (
           <StartScreen
