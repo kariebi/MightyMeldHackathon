@@ -1,13 +1,19 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
+import useSound from "use-sound";
+import wooshSound from "./sounds/woosh.mp3"; 
 
-export function Tile({ content: Content, flip, state, size, index }) {
+export function Tile({ content: Content, flip, state, size}) {
   const [isAnimating, setIsAnimating] = useState(false);
+  const controls = useAnimation();
+  const [playWoosh] = useSound(wooshSound, { volume: 0.5 });
 
   const handleFlip = () => {
     if (!isAnimating && state !== "flipped" && state !== "matched") {
       flip();
       setIsAnimating(true);
+      playWoosh();
+      controls.start({ rotateY: state === "flipped" ? 0 : 180 });
     }
   };
 
@@ -23,7 +29,6 @@ export function Tile({ content: Content, flip, state, size, index }) {
 
   return (
     <div onClick={handleFlip} style={{ ...commonStyles, perspective: "1000px" }}>
-
       <motion.div
         style={{
           ...commonStyles,
@@ -32,7 +37,7 @@ export function Tile({ content: Content, flip, state, size, index }) {
           transformStyle: "preserve-3d",
         }}
         initial={false}
-        animate={{ rotateY: state === "flipped" ? 0 : 180 }}
+        animate={controls}
         onAnimationComplete={() => setIsAnimating(false)}
       >
         {state === "start" && (
@@ -83,7 +88,6 @@ function Matched({ className, children, state }) {
     <div
       className={className}
       style={{
-
         transition: "opacity 1s",
         opacity: state === "matched" ? 1 : 0,
       }}

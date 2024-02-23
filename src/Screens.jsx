@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
 import * as icons from "react-icons/gi";
+import Navbar from "./Navbar";
 import { Tile } from "./Tile";
+import goodSound from "./sounds/good.mp3";
+import successSound from "./sounds/success.mp3";
+import useSound from "use-sound";
+
 
 export const possibleTileContents = [
   icons.GiHearts,
@@ -27,10 +32,7 @@ export function StartScreen({ start }) {
       </span>
       <button
         onClick={start}
-        className="bg-gray-400 mt-[28px] text-lg text-white px-12 py-2 rounded-full"
-        style={{
-          background: 'linear-gradient(to bottom, #f790c8, #ec4899)',
-        }}
+        className="mt-[28px] text-lg text-white px-12 py-2 rounded-full bg-gradient-to-b from-pink-300 to-pink-600"
       >
         Play
       </button>
@@ -38,10 +40,13 @@ export function StartScreen({ start }) {
   );
 }
 
-export function PlayScreen({ end }) {
+export function PlayScreen({ end, toMainMenu, restartstate }) {
   const [tiles, setTiles] = useState(null);
   const [tryCount, setTryCount] = useState(0);
-
+  const [timerResetKey, setTimerResetKey] = useState(0);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [playGoodSound] = useSound(goodSound);
+  const [playSuccessSound] = useSound(successSound);
 
   const calculateSize = () => {
     const screenWidth = window.innerWidth;
@@ -54,6 +59,7 @@ export function PlayScreen({ end }) {
   const reset = () => {
     setTiles(null);
     setTryCount(0);
+    setTimerResetKey((prevKey) => prevKey + 1);
   };
 
   useEffect(() => {
@@ -96,7 +102,6 @@ export function PlayScreen({ end }) {
     // Is the tile already flipped? We don’t allow flipping it back.
     if (tiles[i].state === "flipped") return;
 
-
     // How many tiles are currently flipped?
     const flippedTiles = tiles.filter((tile) => tile.state === "flipped");
     const flippedCount = flippedTiles.length;
@@ -118,6 +123,7 @@ export function PlayScreen({ end }) {
           ticks: 300,
         });
         newState = "matched";
+        playGoodSound();
       }
 
       // After a delay, either flip the tiles back or mark them as matched.
@@ -130,7 +136,11 @@ export function PlayScreen({ end }) {
 
           // If all tiles are matched, the game is over.
           if (newTiles.every((tile) => tile.state === "matched")) {
-            setTimeout(end, 0);
+            setTimeout(() => {
+              end();
+              // Play 'success' sound on all tiles matched
+              playSuccessSound();
+            }, 1000);
           }
 
           return newTiles;
@@ -148,6 +158,13 @@ export function PlayScreen({ end }) {
 
   return (
     <div className="flex justify-center flex-col items-center gap-6">
+      <Navbar
+        onRestart={() => reset()}
+        onMainMenu={() => setShowConfirmationModal(true)}
+        showTimer={Boolean(tiles)}
+        key={timerResetKey}
+        restartstate={restartstate}
+      />
       <div className="font-semibold  text-[18px] text-blue-600 sm:text-xl">
         <span>
           Tries
@@ -163,7 +180,8 @@ export function PlayScreen({ end }) {
             style={{
               animation: `fadeIn 500ms ease-out ${i * 0.1}s forwards`,
               opacity: 0,
-              transition: "opacity 0.5s ease-in-out",
+              scale: 0,
+              transition: "0.5s ease-in-out",
             }}
           >
             <Tile
@@ -175,33 +193,58 @@ export function PlayScreen({ end }) {
           </div>
         ))}
       </div>
+
+      {/* Confirmation Modal */}
+      <>
+        <div className={`${showConfirmationModal ? "block" : "hidden"} absolute bg-black bg-opacity-70 w-screen h-screen duration-0`}></div>
+
+        <div className={`transition duration-500 bg-white p-8 rounded-lg fixed text-center ${showConfirmationModal ? " scale-1" : "scale-0"}`}>
+          <h2 className="text-2xl font-bold mb-4">Exit Game</h2>
+          <p className="text-gray-600 mb-6">Are you sure you want to exit the game?</p>
+          <button
+            onClick={() => {
+              setShowConfirmationModal(false);
+              toMainMenu();
+            }}
+            className="text-white px-4 py-2 rounded mr-4 bg-gradient-to-b from-blue-300 to-blue-600"
+          >
+            Yes
+          </button>
+          <button
+            onClick={() => setShowConfirmationModal(false)}
+            className="text-white px-4 py-2 rounded bg-gradient-to-b from-pink-300 to-pink-600"
+          >
+            No
+          </button>
+        </div>
+      </>
     </div>
   );
 }
 
-export function RestartModal({ onRestart, onMainMenu }) {
+export function RestartModal({ onRestart, onMainMenu, setRestartState }) {
+  const handleRestart = () => {
+    onRestart();
+    setRestartState((prev) => !prev);
+  };
+
   return (
     <div className={`bg-white p-8 rounded-lg text-center`}>
       <h2 className="text-2xl font-bold mb-4">Congrats🥳</h2>
       <p className="text-gray-600 mb-6">You won!</p>
       <button
-        onClick={onRestart}
-        className="text-white px-4 py-2 rounded mr-4"
-        style={{
-          background: 'linear-gradient(to bottom, #85d7ff, #0063b0)',
-        }}
+        onClick={handleRestart}
+        className="text-white px-4 py-2 rounded mr-4 bg-gradient-to-b from-blue-300 to-blue-600"
       >
         Restart
       </button>
       <button
         onClick={onMainMenu}
-        className=" text-white px-4 py-2 rounded"
-        style={{
-          background: 'linear-gradient(to bottom, #f790c8, #ec4899)',
-        }}
+        className="text-white px-4 py-2 rounded bg-gradient-to-b from-pink-300 to-pink-600"
       >
         Main Menu
       </button>
     </div>
   );
 }
+
