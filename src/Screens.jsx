@@ -6,7 +6,9 @@ import { Tile } from "./Tile";
 import goodSound from "./sounds/good.mp3";
 import successSound from "./sounds/success.mp3";
 import useSound from "use-sound";
-
+import { useGame } from "./context/GameContext";
+import { GiCardRandom } from "react-icons/gi";
+import { IoMdTime } from "react-icons/io";
 
 export const possibleTileContents = [
   icons.GiHearts,
@@ -40,13 +42,15 @@ export function StartScreen({ start }) {
   );
 }
 
-export function PlayScreen({ end, toMainMenu, restartstate }) {
+export function PlayScreen({ end, toMainMenu }) {
   const [tiles, setTiles] = useState(null);
   const [tryCount, setTryCount] = useState(0);
   const [timerResetKey, setTimerResetKey] = useState(0);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [playGoodSound] = useSound(goodSound);
   const [playSuccessSound] = useSound(successSound);
+  const showTimer = Boolean(tiles)
+  const { setCurrentTime, currentScore, setCurrentScore, restart, setRestart } = useGame();
 
   const calculateSize = () => {
     const screenWidth = window.innerWidth;
@@ -56,10 +60,23 @@ export function PlayScreen({ end, toMainMenu, restartstate }) {
       return "100px";
     }
   };
+
+  useEffect(() => {
+    setCurrentScore(tryCount)
+  }, [tryCount])
+
+  useEffect(() => {
+    if (restart) {
+      reset();
+      setRestart(false);
+    }
+  }, [restart]);
+
   const reset = () => {
     setTiles(null);
     setTryCount(0);
     setTimerResetKey((prevKey) => prevKey + 1);
+    setCurrentTime({ minutes: 0, seconds: 0 });
   };
 
   useEffect(() => {
@@ -68,14 +85,13 @@ export function PlayScreen({ end, toMainMenu, restartstate }) {
         ticks: 1000,
       });
       setTimeout(() => {
-        reset();
-        end();
+        handleGameEnd();
       }, 1000);
     }
-  }, [tiles, end]);
+  }, [tiles]);
 
   const getTiles = (tileCount) => {
-    // Throw error if count is not even.
+    // Throw an error if count is not even.
     if (tileCount % 2 !== 0) {
       throw new Error("The number of tiles must be even.");
     }
@@ -156,22 +172,58 @@ export function PlayScreen({ end, toMainMenu, restartstate }) {
     });
   };
 
+  const handleGameEnd = () => {
+    end();
+    playSuccessSound();
+  };
+
+  function Timer() {
+    const { currentTime } = useGame();
+
+    return (
+      <div className="text-blue-600 flex gap-1 items-center font-semibold text-xl">
+        <IoMdTime />
+        <span>
+          {String(currentTime.minutes).padStart(2, "0")}:
+          {String(currentTime.seconds).padStart(2, "0")}
+        </span>
+      </div>
+    );
+  }
+
+
+  useEffect(() => {
+    let interval;
+    if (showTimer) {
+      interval = setInterval(() => {
+        setCurrentTime((prevTime) => {
+          const newSeconds = prevTime.seconds === 59 ? 0 : prevTime.seconds + 1;
+          const newMinutes = newSeconds === 0 ? prevTime.minutes + 1 : prevTime.minutes;
+
+          return { minutes: newMinutes, seconds: newSeconds };
+        });
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+
+  }, [showTimer, setCurrentTime, restart]);
+
   return (
     <div className="flex justify-center flex-col items-center gap-6">
       <Navbar
         onRestart={() => reset()}
         onMainMenu={() => setShowConfirmationModal(true)}
-        showTimer={Boolean(tiles)}
         key={timerResetKey}
-        restartstate={restartstate}
       />
-      <div className="font-semibold  text-[18px] text-blue-600 sm:text-xl">
-        <span>
-          Tries
-        </span>
+      <div className="font-semibold items-center flex text-[18px] text-blue-600 sm:text-xl">
+        <GiCardRandom />
         <span className="ml-2 bg-blue-300 px-2.5 py-[0.5px] rounded-[6px]">
           {tryCount}
         </span>
+      </div>
+      <div>
+        {showTimer && <Timer />}
       </div>
       <div className="flex gap-2 rounded-xl sm:rounded-2xl flex-wrap bg-blue-100 py-[10px] sm:py-[20px] justify-center w-[285px] sm:w-[460px]">
         {getTiles(16).map((tile, i) => (
@@ -193,6 +245,7 @@ export function PlayScreen({ end, toMainMenu, restartstate }) {
           </div>
         ))}
       </div>
+      <button onClick={end}>End game</button>
 
       {/* Confirmation Modal */}
       <>
@@ -222,16 +275,41 @@ export function PlayScreen({ end, toMainMenu, restartstate }) {
   );
 }
 
-export function RestartModal({ onRestart, onMainMenu, setRestartState }) {
+export function RestartModal({ onRestart, onMainMenu, RestartModalVisible, setRestartState }) {
+  const { setRestart, currentTime, currentScore } = useGame();
+
+  const [message, setMessage] = useState({ header: "Congrats! 🥳", comment: "You won!" });
+  const storedBestTime = parseInt(localStorage.getItem("bestTime"));
+  const storedHighScore = parseInt(localStorage.getItem("highScore"));
+
+  const didBeatBestTime = currentTime.minutes * 60 + currentTime.seconds < storedBestTime || isNaN(storedBestTime);
+  const didBeatBestScore = currentScore < storedHighScore || isNaN(storedHighScore);
+
+  useEffect(() => {
+    if (RestartModalVisible) {
+      if (didBeatBestTime && didBeatBestScore) {
+        setMessage({ header: "Congratulations! 🥳", comment: "You're the fastest and most brilliant!" });
+        localStorage.setItem("bestTime", currentTime.minutes * 60 + currentTime.seconds);
+        localStorage.setItem("highScore", currentScore);
+      } else if (didBeatBestTime) {
+        localStorage.setItem("bestTime", currentTime.minutes * 60 + currentTime.seconds);
+        setMessage({ header: "Congratulations! 🥳", comment: "You set a new best time" });
+      } else if (didBeatBestScore) {
+        localStorage.setItem("highScore", currentScore);
+        setMessage({ header: "Congratulations! 🥳", comment: "You set a new best score!" });
+      }
+    }
+  }, [RestartModalVisible, didBeatBestTime, didBeatBestScore, currentTime, currentScore]);
+
   const handleRestart = () => {
     onRestart();
-    setRestartState((prev) => !prev);
+    setRestart(true);
   };
 
   return (
     <div className={`bg-white p-8 rounded-lg text-center`}>
-      <h2 className="text-2xl font-bold mb-4">Congrats🥳</h2>
-      <p className="text-gray-600 mb-6">You won!</p>
+      <h2 className="text-2xl font-bold mb-4">{message.header}</h2>
+      <p className="text-gray-600 mb-6">{message.comment}</p>
       <button
         onClick={handleRestart}
         className="text-white px-4 py-2 rounded mr-4 bg-gradient-to-b from-blue-300 to-blue-600"
@@ -247,4 +325,3 @@ export function RestartModal({ onRestart, onMainMenu, setRestartState }) {
     </div>
   );
 }
-

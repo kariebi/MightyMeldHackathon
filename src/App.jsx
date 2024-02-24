@@ -8,7 +8,7 @@ function App() {
   const [showRestartModal, setShowRestartModal] = useState(false);
   const [restartstate, setRestartState] = useState(false);
 
-  const [playBackgroundSong, { stop, volume }] = useSound(backgroundSong, { volume: 0.5, loop: true });
+  const [playBackgroundSong, { stop, isPlaying }] = useSound(backgroundSong, { volume: 0.5, loop: true });
 
 
   const handleRestart = () => {
@@ -36,7 +36,9 @@ function App() {
           <StartScreen
             start={() => {
               setGameState("play");
-              playBackgroundSong();
+              if (!isPlaying) {
+                playBackgroundSong();
+              }
             }}
             className="I cannot convert any existing Tailwind styles since there is no specific class or element provided."
           />
@@ -49,6 +51,7 @@ function App() {
               onRestart={handleRestart}
               onMainMenu={handleMainMenu}
               restartstate={restartstate}
+              RestartModalVisible={showRestartModal}
               setRestartState={setRestartState}
             />
           </div>
