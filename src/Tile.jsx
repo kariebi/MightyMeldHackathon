@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import useSound from "use-sound";
+import mouseclickSound from "./sounds/mouse_click.mp3"
 import wooshSound from "./sounds/woosh.mp3"; 
 
 export function Tile({ content: Content, flip, state, size}) {
   const [isAnimating, setIsAnimating] = useState(false);
   const controls = useAnimation();
+  const [PlayClickSound] = useSound(mouseclickSound, { volume: 0.2 })
   const [playWoosh] = useSound(wooshSound, { volume: 0.5 });
 
   const handleFlip = () => {
@@ -13,6 +15,7 @@ export function Tile({ content: Content, flip, state, size}) {
       flip();
       setIsAnimating(true);
       playWoosh();
+      PlayClickSound()
       controls.start({ rotateY: state === "flipped" ? 0 : 180 });
     }
   };

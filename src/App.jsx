@@ -7,7 +7,6 @@ function App() {
   const [gameState, setGameState] = useState("start");
   const [showRestartModal, setShowRestartModal] = useState(false);
   const [restartstate, setRestartState] = useState(false);
-
   const [playBackgroundSong, { stop, isPlaying }] = useSound(backgroundSong, { volume: 0.5, loop: true });
 
 
@@ -19,9 +18,9 @@ function App() {
   };
 
   const handleMainMenu = () => {
+    stop();
     setGameState("start");
     setShowRestartModal(false);
-    stop();
   };
 
   const handleEnd = () => {
@@ -52,7 +51,7 @@ function App() {
               onMainMenu={handleMainMenu}
               restartstate={restartstate}
               RestartModalVisible={showRestartModal}
-              setRestartState={setRestartState}
+              stopbgMusic={stop}
             />
           </div>
         </>

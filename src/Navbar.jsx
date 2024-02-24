@@ -1,7 +1,10 @@
 import { FaCrown } from "react-icons/fa";
 import { MdAccessTimeFilled } from "react-icons/md";
+import mouseclickSound from "./sounds/mouse_click.mp3"
+import useSound from "use-sound";
 
 function Navbar({ onRestart, onMainMenu }) {
+  const [PlayClickSound] = useSound(mouseclickSound, { volume: 0.5 })
 
   const formatTime = (timeInSeconds) => {
     const minutes = Math.floor(timeInSeconds / 60);
@@ -9,8 +12,11 @@ function Navbar({ onRestart, onMainMenu }) {
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   };
   return (
-    <div className="flex fixed top-0 justify-between items-center p-4 bg-blue-100 w-screen">
-      <button onClick={onRestart} className="bg-blue-400 text-white px-4 py-2 rounded">
+    <div className="flex fixed top-0 justify-between items-center  bg-blue-100 w-screen">
+      <button onClick={() => {
+        PlayClickSound();
+        onRestart();
+      }} className="bg-blue-400 text-white px-4 py-2 m-2 rounded">
         Restart
       </button>
       <div className="flex flex-col flex-grow">
@@ -31,7 +37,10 @@ function Navbar({ onRestart, onMainMenu }) {
           </span>
         </div>
       </div>
-      <button onClick={onMainMenu} className="bg-red-500 text-white px-4 py-2 rounded">
+      <button onClick={() => {
+        PlayClickSound();
+        onMainMenu();
+      }} className="bg-red-500 m-2 text-white px-4 py-2 rounded">
         Main Menu
       </button>
     </div>

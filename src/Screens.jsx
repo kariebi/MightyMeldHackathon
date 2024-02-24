@@ -5,10 +5,12 @@ import Navbar from "./Navbar";
 import { Tile } from "./Tile";
 import goodSound from "./sounds/good.mp3";
 import successSound from "./sounds/success.mp3";
+import mouseclickSound from "./sounds/mouse_click.mp3"
 import useSound from "use-sound";
 import { useGame } from "./context/GameContext";
 import { GiCardRandom } from "react-icons/gi";
 import { IoMdTime } from "react-icons/io";
+
 
 export const possibleTileContents = [
   icons.GiHearts,
@@ -24,6 +26,8 @@ export const possibleTileContents = [
 ];
 
 export function StartScreen({ start }) {
+  const [PlayClickSound] = useSound(mouseclickSound, { volume: 0.5 })
+
   return (
     <div className="flex flex-col bg-pink-100 text-pink-500 justify-center text-center items-center rounded-xl w-[300px] sm:w-[400px]  sm:text-lg sm:h-[400px] font-semibold h-[300px] gap-[16px]">
       <h1 className="font-semibold text-3xl sm:text-[40px]">
@@ -33,7 +37,10 @@ export function StartScreen({ start }) {
         Flip over tiles looking for pairs
       </span>
       <button
-        onClick={start}
+        onClick={() => {
+        start();
+        PlayClickSound();
+      }}
         className="mt-[28px] text-lg text-white px-12 py-2 rounded-full bg-gradient-to-b from-pink-300 to-pink-600"
       >
         Play
@@ -50,7 +57,9 @@ export function PlayScreen({ end, toMainMenu }) {
   const [playGoodSound] = useSound(goodSound);
   const [playSuccessSound] = useSound(successSound);
   const showTimer = Boolean(tiles)
-  const { setCurrentTime, currentScore, setCurrentScore, restart, setRestart } = useGame();
+  const { setCurrentTime, setCurrentScore, restart, setRestart } = useGame();
+  const [showRestartConfirmationModal, setshowRestartConfirmationModal] = useState(false);
+  const [PlayClickSound] = useSound(mouseclickSound, { volume: 0.5 })
 
   const calculateSize = () => {
     const screenWidth = window.innerWidth;
@@ -154,7 +163,6 @@ export function PlayScreen({ end, toMainMenu }) {
           if (newTiles.every((tile) => tile.state === "matched")) {
             setTimeout(() => {
               end();
-              // Play 'success' sound on all tiles matched
               playSuccessSound();
             }, 1000);
           }
@@ -210,20 +218,22 @@ export function PlayScreen({ end, toMainMenu }) {
   }, [showTimer, setCurrentTime, restart]);
 
   return (
-    <div className="flex justify-center flex-col items-center gap-6">
+    <div className="flex justify-center flex-col items-center gap-2">
       <Navbar
-        onRestart={() => reset()}
+        onRestart={() => setshowRestartConfirmationModal(true)}
         onMainMenu={() => setShowConfirmationModal(true)}
         key={timerResetKey}
       />
-      <div className="font-semibold items-center flex text-[18px] text-blue-600 sm:text-xl">
-        <GiCardRandom />
-        <span className="ml-2 bg-blue-300 px-2.5 py-[0.5px] rounded-[6px]">
-          {tryCount}
-        </span>
-      </div>
-      <div>
-        {showTimer && <Timer />}
+      <div className="font-semibold mt-16 items-center flex justify-between w-full px-2 text-[18px] text-blue-600 sm:text-xl">
+        <div className="flex items-center">
+          <GiCardRandom />
+          <span className="ml-2 bg-blue-300 px-2.5 py-[0.5px] rounded-[6px]">
+            {tryCount}
+          </span>
+        </div>
+        <div className="">
+          {showTimer && <Timer />}
+        </div>
       </div>
       <div className="flex gap-2 rounded-xl sm:rounded-2xl flex-wrap bg-blue-100 py-[10px] sm:py-[20px] justify-center w-[285px] sm:w-[460px]">
         {getTiles(16).map((tile, i) => (
@@ -245,9 +255,38 @@ export function PlayScreen({ end, toMainMenu }) {
           </div>
         ))}
       </div>
-      <button onClick={end}>End game</button>
 
-      {/* Confirmation Modal */}
+      {/*Restart Confirmation Modal */}
+      <>
+        <div className={`${showRestartConfirmationModal ? "block" : "hidden"} fixed top-0 bg-black bg-opacity-70 w-screen h-screen duration-0`}></div>
+
+        <div className={`transition w-[90%] max-w-[400px] duration-500 bg-white p-8 rounded-lg top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[1] fixed text-center ${showRestartConfirmationModal ? " scale-1" : "scale-0"}`}>
+          <h2 className="text-2xl font-bold mb-4">Restart Game</h2>
+          <p className="text-gray-600 mb-6">Are you sure you want to restart the game?</p>
+          <button
+            onClick={() => {
+              PlayClickSound();
+              setshowRestartConfirmationModal(false);
+              reset();
+            }}
+            className="text-white px-4 py-2 rounded mr-4 bg-gradient-to-b from-blue-300 to-blue-600"
+          >
+            Yes
+          </button>
+          <button
+            onClick={() => {
+              PlayClickSound();
+              setshowRestartConfirmationModal(false)
+            }
+            }
+            className="text-white px-4 py-2 rounded bg-gradient-to-b from-pink-300 to-pink-600"
+          >
+            No
+          </button>
+        </div>
+      </>
+
+      {/* Main Menu Confirmation Modal */}
       <>
         <div className={`${showConfirmationModal ? "block" : "hidden"} absolute bg-black bg-opacity-70 w-screen h-screen duration-0`}></div>
 
@@ -256,6 +295,7 @@ export function PlayScreen({ end, toMainMenu }) {
           <p className="text-gray-600 mb-6">Are you sure you want to exit the game?</p>
           <button
             onClick={() => {
+              PlayClickSound();
               setShowConfirmationModal(false);
               toMainMenu();
             }}
@@ -264,7 +304,10 @@ export function PlayScreen({ end, toMainMenu }) {
             Yes
           </button>
           <button
-            onClick={() => setShowConfirmationModal(false)}
+            onClick={() => {
+              PlayClickSound();
+              setShowConfirmationModal(false)
+            }}
             className="text-white px-4 py-2 rounded bg-gradient-to-b from-pink-300 to-pink-600"
           >
             No
@@ -275,7 +318,7 @@ export function PlayScreen({ end, toMainMenu }) {
   );
 }
 
-export function RestartModal({ onRestart, onMainMenu, RestartModalVisible, setRestartState }) {
+export function RestartModal({ onRestart, onMainMenu, RestartModalVisible,stopbgMusic }) {
   const { setRestart, currentTime, currentScore } = useGame();
 
   const [message, setMessage] = useState({ header: "Congrats! 🥳", comment: "You won!" });
@@ -287,6 +330,7 @@ export function RestartModal({ onRestart, onMainMenu, RestartModalVisible, setRe
 
   useEffect(() => {
     if (RestartModalVisible) {
+      stopbgMusic()
       if (didBeatBestTime && didBeatBestScore) {
         setMessage({ header: "Congratulations! 🥳", comment: "You're the fastest and most brilliant!" });
         localStorage.setItem("bestTime", currentTime.minutes * 60 + currentTime.seconds);
