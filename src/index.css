@@ -13,3 +13,8 @@
       scale: 1;
     }
   }
+
+.progress-sign{
+  transition: all;
+  transition-duration: 500ms;
+}

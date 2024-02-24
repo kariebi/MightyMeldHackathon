@@ -38,9 +38,9 @@ export function StartScreen({ start }) {
       </span>
       <button
         onClick={() => {
-        start();
-        PlayClickSound();
-      }}
+          start();
+          PlayClickSound();
+        }}
         className="mt-[28px] text-lg text-white px-12 py-2 rounded-full bg-gradient-to-b from-pink-300 to-pink-600"
       >
         Play
@@ -48,6 +48,7 @@ export function StartScreen({ start }) {
     </div>
   );
 }
+
 
 export function PlayScreen({ end, toMainMenu }) {
   const [tiles, setTiles] = useState(null);
@@ -60,6 +61,7 @@ export function PlayScreen({ end, toMainMenu }) {
   const { setCurrentTime, setCurrentScore, restart, setRestart } = useGame();
   const [showRestartConfirmationModal, setshowRestartConfirmationModal] = useState(false);
   const [PlayClickSound] = useSound(mouseclickSound, { volume: 0.5 })
+  const [progress, setProgress] = useState(0);
 
   const calculateSize = () => {
     const screenWidth = window.innerWidth;
@@ -120,8 +122,28 @@ export function PlayScreen({ end, toMainMenu }) {
       .map((content) => ({ content, state: "start" }));
 
     setTiles(shuffledContents);
+
     return shuffledContents;
   };
+
+  const calculateProgress = (tiles) => {
+    if (!tiles) return 0;
+
+    // Calculate the total number of matches
+    const totalMatches = tiles.length / 1;
+
+    // Calculate the progress percentage
+    const matchedTiles = tiles.filter((tile) => tile.state === 'matched').length;
+    const newProgress = totalMatches && (matchedTiles / totalMatches) * 100;
+    setProgress(newProgress);
+    console.log(progress, matchedTiles, totalMatches)
+  };
+
+  useEffect(() => {
+    calculateProgress(tiles);
+  }, [tiles]);
+
+
 
   const flip = (i) => {
     // Is the tile already flipped? We don’t allow flipping it back.
@@ -185,6 +207,7 @@ export function PlayScreen({ end, toMainMenu }) {
     playSuccessSound();
   };
 
+
   function Timer() {
     const { currentTime } = useGame();
 
@@ -216,7 +239,6 @@ export function PlayScreen({ end, toMainMenu }) {
     return () => clearInterval(interval);
 
   }, [showTimer, setCurrentTime, restart]);
-
   return (
     <div className="flex justify-center flex-col items-center gap-2">
       <Navbar
@@ -224,7 +246,7 @@ export function PlayScreen({ end, toMainMenu }) {
         onMainMenu={() => setShowConfirmationModal(true)}
         key={timerResetKey}
       />
-      <div className="font-semibold mt-16 items-center flex justify-between w-full px-2 text-[18px] text-blue-600 sm:text-xl">
+      <div className="font-semibold sm:mt-16 items-center flex justify-between w-full px-2 text-[18px] text-blue-600 sm:text-xl">
         <div className="flex items-center">
           <GiCardRandom />
           <span className="ml-2 bg-blue-300 px-2.5 py-[0.5px] rounded-[6px]">
@@ -234,6 +256,12 @@ export function PlayScreen({ end, toMainMenu }) {
         <div className="">
           {showTimer && <Timer />}
         </div>
+      </div>
+      <div className="w-full h-3 bg-blue-200 rounded-full">
+        <div className={`bg-blue-400 progress-sign h-full rounded-full`} 
+        style={{ 
+          width: `${progress}%` 
+        }}></div>
       </div>
       <div className="flex gap-2 rounded-xl sm:rounded-2xl flex-wrap bg-blue-100 py-[10px] sm:py-[20px] justify-center w-[285px] sm:w-[460px]">
         {getTiles(16).map((tile, i) => (
@@ -318,7 +346,7 @@ export function PlayScreen({ end, toMainMenu }) {
   );
 }
 
-export function RestartModal({ onRestart, onMainMenu, RestartModalVisible,stopbgMusic }) {
+export function RestartModal({ onRestart, onMainMenu, RestartModalVisible, stopbgMusic }) {
   const { setRestart, currentTime, currentScore } = useGame();
 
   const [message, setMessage] = useState({ header: "Congrats! 🥳", comment: "You won!" });
