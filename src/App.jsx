@@ -35,9 +35,8 @@ function App() {
           <StartScreen
             start={() => {
               setGameState("play");
-              if (!isPlaying) {
-                playBackgroundSong();
-              }
+              stop();
+              playBackgroundSong();              
             }}
             className="I cannot convert any existing Tailwind styles since there is no specific class or element provided."
           />
