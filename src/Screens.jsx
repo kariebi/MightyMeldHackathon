@@ -28,6 +28,12 @@ export const possibleTileContents = [
 export function StartScreen({ start, playBackgroundSong }) {
   const [PlayClickSound] = useSound(mouseclickSound, { volume: 0.5 })
 
+  const handleStart = () => {
+    playBackgroundSong();
+    PlayClickSound();
+    start();
+  };
+  
   return (
     <div className="flex flex-col bg-pink-100 text-pink-500 justify-center text-center items-center rounded-xl w-[300px] sm:w-[400px]  sm:text-lg sm:h-[400px] font-semibold h-[300px] gap-[16px]">
       <h1 className="font-semibold text-3xl sm:text-[40px]">
@@ -37,11 +43,7 @@ export function StartScreen({ start, playBackgroundSong }) {
         Flip over tiles looking for pairs
       </span>
       <button
-        onClick={() => {
-          playBackgroundSong();
-          PlayClickSound();
-          start();
-        }}
+        onClick={handleStart}
         className="mt-[28px] text-lg text-white px-12 py-2 rounded-full bg-gradient-to-b from-pink-300 to-pink-600"
       >
         Play
