@@ -39,6 +39,7 @@ const handleStart=()=>{
         {gameState === "start" && (
           <StartScreen
             start={handleStart}
+            PlayBackgroundSound={playBackgroundSong}
             className="I cannot convert any existing Tailwind styles since there is no specific class or element provided."
           />
         )}
