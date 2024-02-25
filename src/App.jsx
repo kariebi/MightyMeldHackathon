@@ -2,13 +2,15 @@ import { useState } from "react";
 import { StartScreen, PlayScreen, RestartModal } from "./Screens";
 import useSound from 'use-sound';
 import backgroundSong from './sounds/bg_music.mp3';
+import { useGame } from "./context/GameContext";
 
 function App() {
+  const { bgMute } = useGame()
   const [gameState, setGameState] = useState("start");
   const [showRestartModal, setShowRestartModal] = useState(false);
   const [restartstate, setRestartState] = useState(false);
-  const [playBackgroundSong, { stop, isPlaying }] = useSound(backgroundSong, { volume: 0.5, loop: true });
-  const [intropage,setintropage]=useState(true)
+  const [playBackgroundSong, { stop, isPlaying }] = useSound(backgroundSong, { volume:!bgMute? 0.5:0, loop: true });
+  const [intropage, setintropage] = useState(true)
 
   const handleRestart = () => {
     playBackgroundSong();
@@ -23,11 +25,14 @@ function App() {
     setShowRestartModal(false);
   };
 
-const handleStart=()=>{
-  playBackgroundSong();
-  setGameState("play")
-}
-  
+  const handleStart = () => {
+    stop()
+    if (!isPlaying) {
+      playBackgroundSong();
+    }
+    setGameState("play")
+  }
+
   const handleEnd = () => {
     setShowRestartModal(true);
     stop();

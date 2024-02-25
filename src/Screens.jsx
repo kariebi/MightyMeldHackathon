@@ -3,6 +3,7 @@ import confetti from "canvas-confetti";
 import * as icons from "react-icons/gi";
 import Navbar from "./Navbar";
 import { Tile } from "./Tile";
+import Settings from "./Settings";
 import goodSound from "./sounds/good.mp3";
 import successSound from "./sounds/success.mp3";
 import mouseclickSound from "./sounds/mouse_click.mp3"
@@ -10,7 +11,6 @@ import useSound from "use-sound";
 import { useGame } from "./context/GameContext";
 import { GiCardRandom } from "react-icons/gi";
 import { IoMdTime } from "react-icons/io";
-
 
 export const possibleTileContents = [
   icons.GiHearts,
@@ -25,55 +25,55 @@ export const possibleTileContents = [
   icons.GiOpenBook,
 ];
 
-export function StartScreen({ start, PlayBackgroundSound, intropage,setintropage }) {
+export function StartScreen({ start, PlayBackgroundSound, intropage, setintropage }) {
   const [PlayClickSound] = useSound(mouseclickSound, { volume: 0.5 })
 
-const handleintro=()=>{
-  PlayClickSound();
-  PlayBackgroundSound();
-  setintropage(false)
-}
+  const handleintro = () => {
+    PlayClickSound();
+    PlayBackgroundSound();
+    setintropage(false)
+  }
   return (
     <>
-      {intropage &&  (
-      <button className="fixed top-0 left-0 bg-black text-white w-full h-full flex items-center justify-center" onClick={()=>{handleintro()}}>
-      <h1>MemoryFlip</h1>
-      <span>Tap to continue</span>
-      </button>
-    )}
-    <div className="flex flex-col bg-pink-100 text-pink-500 justify-center text-center items-center rounded-xl w-[300px] sm:w-[400px]  sm:text-lg sm:h-[400px] font-semibold h-[300px] gap-[16px]">
-      <h1 className="font-semibold text-3xl sm:text-[40px]">
-        Memory
-      </h1>
-      <span className="font-normal">
-        Flip over tiles looking for pairs
-      </span>
-      <button
-        onClick={()=>{
-          PlayClickSound()
-          start();
-        }}
-        className="mt-[28px] text-lg text-white px-12 py-2 rounded-full bg-gradient-to-b from-pink-300 to-pink-600"
-      >
-        Play
-      </button>
-    </div>
+      {intropage && (
+        <button className="fixed top-0 left-0 bg-black text-white w-full h-full flex items-center justify-center" onClick={() => { handleintro() }}>
+          <h1>MemoryFlip</h1>
+          <span>Tap to continue</span>
+        </button>
+      )}
+      <div className="flex flex-col bg-pink-100 text-pink-500 justify-center text-center items-center rounded-xl w-[300px] sm:w-[400px]  sm:text-lg sm:h-[400px] font-semibold h-[300px] gap-[16px]">
+        <h1 className="font-semibold text-3xl sm:text-[40px]">
+          Memory
+        </h1>
+        <span className="font-normal">
+          Flip over tiles looking for pairs
+        </span>
+        <button
+          onClick={() => {
+            PlayClickSound()
+            start();
+          }}
+          className="mt-[28px] text-lg text-white px-12 py-2 rounded-full bg-gradient-to-b from-pink-300 to-pink-600"
+        >
+          Play
+        </button>
+      </div>
     </>
   );
 }
 
 
 export function PlayScreen({ end, toMainMenu }) {
+  const { setCurrentTime, setCurrentScore, SFXMute, restart, setRestart } = useGame();
   const [tiles, setTiles] = useState(null);
   const [tryCount, setTryCount] = useState(0);
   const [timerResetKey, setTimerResetKey] = useState(0);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const [playGoodSound] = useSound(goodSound);
-  const [playSuccessSound] = useSound(successSound);
+  const [playGoodSound] = useSound(goodSound, { volume: !SFXMute ? 1 : 0 });
+  const [playSuccessSound] = useSound(successSound, { volume: !SFXMute ? 1 : 0 });
   const showTimer = Boolean(tiles)
-  const { setCurrentTime, setCurrentScore, restart, setRestart } = useGame();
   const [showRestartConfirmationModal, setshowRestartConfirmationModal] = useState(false);
-  const [PlayClickSound] = useSound(mouseclickSound, { volume: 0.5 })
+  const [PlayClickSound] = useSound(mouseclickSound, { volume: !SFXMute ? 0.5 : 0 })
   const [progress, setProgress] = useState(0);
 
   const calculateSize = () => {
@@ -149,7 +149,6 @@ export function PlayScreen({ end, toMainMenu }) {
     const matchedTiles = tiles.filter((tile) => tile.state === 'matched').length;
     const newProgress = totalMatches && (matchedTiles / totalMatches) * 100;
     setProgress(newProgress);
-    console.log(progress, matchedTiles, totalMatches)
   };
 
   useEffect(() => {
@@ -271,10 +270,10 @@ export function PlayScreen({ end, toMainMenu }) {
         </div>
       </div>
       <div className="w-full h-3 bg-blue-200 rounded-full">
-        <div className={`bg-blue-400 progress-sign h-full rounded-full`} 
-        style={{ 
-          width: `${progress}%` 
-        }}></div>
+        <div className={`bg-blue-400 progress-sign h-full rounded-full`}
+          style={{
+            width: `${progress}%`
+          }}></div>
       </div>
       <div className="flex gap-2 rounded-xl sm:rounded-2xl flex-wrap bg-blue-100 py-[10px] sm:py-[20px] justify-center w-[285px] sm:w-[460px]">
         {getTiles(16).map((tile, i) => (
@@ -296,7 +295,7 @@ export function PlayScreen({ end, toMainMenu }) {
           </div>
         ))}
       </div>
-
+      <Settings />
       {/*Restart Confirmation Modal */}
       <>
         <div className={`${showRestartConfirmationModal ? "block" : "hidden"} fixed top-0 bg-black bg-opacity-70 w-screen h-screen duration-0`}></div>

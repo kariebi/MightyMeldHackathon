@@ -2,13 +2,15 @@ import { useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import useSound from "use-sound";
 import mouseclickSound from "./sounds/mouse_click.mp3"
-import wooshSound from "./sounds/woosh.mp3"; 
+import wooshSound from "./sounds/woosh.mp3";
+import { useGame } from "./context/GameContext";
 
-export function Tile({ content: Content, flip, state, size}) {
+export function Tile({ content: Content, flip, state, size }) {
+  const { SFXMute } = useGame();
   const [isAnimating, setIsAnimating] = useState(false);
   const controls = useAnimation();
-  const [PlayClickSound] = useSound(mouseclickSound, { volume: 0.2 })
-  const [playWoosh] = useSound(wooshSound, { volume: 0.5 });
+  const [PlayClickSound] = useSound(mouseclickSound, { volume: !SFXMute? 0.2:0 })
+  const [playWoosh] = useSound(wooshSound, { volume: !SFXMute? 0.5:0 });
 
   const handleFlip = () => {
     if (!isAnimating && state !== "flipped" && state !== "matched") {
