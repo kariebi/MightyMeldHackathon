@@ -11,10 +11,10 @@ function App() {
 
 
   const handleRestart = () => {
+    playBackgroundSong();
     setGameState("play");
     setShowRestartModal(false);
     setRestartState((prev) => !prev);
-    playBackgroundSong();
   };
 
   const handleMainMenu = () => {
