@@ -25,9 +25,9 @@ function App() {
 
 const handleStart=()=>{
   playBackgroundSong();
-  if(!isPlaying){
+//  if(!isPlaying){
     playBackgroundSong();
-  };
+ // };
  //setGameState("play")
 }
   
