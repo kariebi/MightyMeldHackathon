@@ -5,7 +5,7 @@ import backgroundSong from './sounds/bg_music.mp3';
 import { useGame } from "./context/GameContext";
 
 function App() {
-  const { bgMute } = useGame()
+  const { bgMute , setCurrentTime } = useGame()
   const [gameState, setGameState] = useState("start");
   const [showRestartModal, setShowRestartModal] = useState(false);
   const [restartstate, setRestartState] = useState(false);
@@ -27,6 +27,7 @@ function App() {
 
   const handleStart = () => {
     stop()
+    setCurrentTime({ minutes: 0, seconds: 0 })
     if (!isPlaying) {
       playBackgroundSong();
     }
