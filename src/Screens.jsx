@@ -37,7 +37,7 @@ export function StartScreen({ start, PlayBackgroundSound, intropage, setintropag
     <>
 
       <div className={`fixed top-0 left-0 bg-blue-500 text-white w-full h-full flex flex-col items-center justify-center transition duration-1000 ${intropage ? "translate-x-[0]" : "translate-x-[-100vw]"}`} onClick={() => { handleintro() }}>
-        <h1 className="text-6xl px-2 pb-2 text-center font-semibold">Welcome to <br/><b className="text-black/90">Memory!</b></h1>
+        <h1 className="text-6xl px-2 pb-2 text-center font-semibold">Welcome to <br/><b className="text-black">Memory!</b></h1>
         <span className="translate-y-14">{"'Tap to continue'"}</span>
         <span className="absolute bottom-3 text-xs">
           Created by <b>Kariebi</b>
