@@ -35,7 +35,12 @@ const handleintro=()=>{
 }
   return (
     <>
-      {intropage &&  <button className="fixed bg-black bg-opacity-80 text-white w-full h-full flex items-center justify-center" onClick={()=>{handleintro()}}>Introducing...</button>}
+      {intropage &&  (
+      <button className="fixed top-0 left-0 bg-black text-white w-full h-full flex items-center justify-center" onClick={()=>{handleintro()}}>
+      <h1>MemoryFlip</h1>
+      <span>Tap to continue</span>
+      </button>
+    )}
     <div className="flex flex-col bg-pink-100 text-pink-500 justify-center text-center items-center rounded-xl w-[300px] sm:w-[400px]  sm:text-lg sm:h-[400px] font-semibold h-[300px] gap-[16px]">
       <h1 className="font-semibold text-3xl sm:text-[40px]">
         Memory
