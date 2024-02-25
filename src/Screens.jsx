@@ -37,7 +37,10 @@ export function StartScreen({ start }) {
         Flip over tiles looking for pairs
       </span>
       <button
-        onClick={start}
+        onClick={()=>{
+          PlayClickSound()
+          start();
+        }}
         className="mt-[28px] text-lg text-white px-12 py-2 rounded-full bg-gradient-to-b from-pink-300 to-pink-600"
       >
         Play
