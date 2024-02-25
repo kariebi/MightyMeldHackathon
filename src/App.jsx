@@ -37,7 +37,7 @@ const handleStart=()=>{
     <>
       <div className="flex justify-center items-center w-screen h-screen">
         {gameState === "start" && (
-      <div onClick={()={playBackgroundSong()}} className='w-full h-full justify-center items-center'>
+      <div onClick={()=>{playBackgroundSong()}} className='w-full h-full justify-center items-center'>
           <StartScreen
             start={handleStart}
             className="I cannot convert any existing Tailwind styles since there is no specific class or element provided."
