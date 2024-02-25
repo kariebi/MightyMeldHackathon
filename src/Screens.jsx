@@ -25,7 +25,7 @@ export const possibleTileContents = [
   icons.GiOpenBook,
 ];
 
-export function StartScreen({ start }) {
+export function StartScreen({ start, playBackgroundSong }) {
   const [PlayClickSound] = useSound(mouseclickSound, { volume: 0.5 })
 
   return (
@@ -38,8 +38,9 @@ export function StartScreen({ start }) {
       </span>
       <button
         onClick={() => {
-          start();
+          playBackgroundSong();
           PlayClickSound();
+          start();
         }}
         className="mt-[28px] text-lg text-white px-12 py-2 rounded-full bg-gradient-to-b from-pink-300 to-pink-600"
       >
