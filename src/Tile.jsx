@@ -46,17 +46,17 @@ export function Tile({ content: Content, flip, state, size }) {
         onAnimationComplete={() => setIsAnimating(false)}
       >
         {state === "start" && (
-          <Back className={`flex rounded-md p-2.5 justify-center items-center w-full h-full bg-blue-400 text-center`} />
+          <Back className={`flex rounded-md p-2.5 justify-center items-center w-full h-full bg-blue-600 text-center`} />
         )}
         {state === "flipped" && (
-          <Front className={`flex justify-center p-2.5  rounded-md items-center w-full h-full bg-blue-500 text-white`}>
+          <Front className={`flex justify-center p-2.5  rounded-md items-center w-full h-full bg-blue-400 text-white`}>
             <Content style={commonStyles} />
           </Front>
         )}
       </motion.div>
       {state === "matched" && (
         <Matched
-          className={`flex translate-y-[-60px] p-2.5 sm:translate-y-[-100px] justify-center rounded-md items-center w-full h-full text-blue-600/20`}
+          className={`flex translate-y-[-60px] p-2.5 sm:translate-y-[-100px] justify-center rounded-md items-center w-full h-full text-blue-500/35`}
           style={{
             ...commonStyles,
             transition: "opacity 0.6s",

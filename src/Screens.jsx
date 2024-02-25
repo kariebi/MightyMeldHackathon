@@ -35,13 +35,16 @@ export function StartScreen({ start, PlayBackgroundSound, intropage, setintropag
   }
   return (
     <>
-      {intropage && (
-        <button className="fixed top-0 left-0 bg-black text-white w-full h-full flex items-center justify-center" onClick={() => { handleintro() }}>
-          <h1>MemoryFlip</h1>
-          <span>Tap to continue</span>
-        </button>
-      )}
-      <div className="flex flex-col bg-pink-100 text-pink-500 justify-center text-center items-center rounded-xl w-[300px] sm:w-[400px]  sm:text-lg sm:h-[400px] font-semibold h-[300px] gap-[16px]">
+
+      <div className={`fixed top-0 left-0 bg-blue-500 text-white w-full h-full flex flex-col items-center justify-center transition duration-1000 ${intropage ? "translate-x-[0]" : "translate-x-[-100vw]"}`} onClick={() => { handleintro() }}>
+        <h1 className="text-6xl px-2 pb-2 text-center font-semibold">Welcome to <br/><b className="text-black/90">Memory!</b></h1>
+        <span className="translate-y-14">{"'Tap to continue'"}</span>
+        <span className="absolute bottom-3 text-xs">
+          Created by <b>Kariebi</b>
+        </span>
+      </div>
+
+      <div className="flex flex-col bg-blue-200 text-blue-600 justify-center text-center items-center rounded-xl w-[300px] sm:w-[400px]  sm:text-lg sm:h-[400px] font-semibold h-[300px] gap-[16px]">
         <h1 className="font-semibold text-3xl sm:text-[40px]">
           Memory
         </h1>
@@ -53,7 +56,7 @@ export function StartScreen({ start, PlayBackgroundSound, intropage, setintropag
             PlayClickSound()
             start();
           }}
-          className="mt-[28px] text-lg text-white px-12 py-2 rounded-full bg-gradient-to-b from-pink-300 to-pink-600"
+          className="mt-[28px] text-lg text-white px-12 py-2 rounded-full bg-gradient-to-b from-blue-300 to-blue-600"
         >
           Play
         </button>
@@ -258,18 +261,18 @@ export function PlayScreen({ end, toMainMenu }) {
         onMainMenu={() => setShowConfirmationModal(true)}
         key={timerResetKey}
       />
-      <div className="font-semibold sm:mt-16 items-center flex justify-between w-full px-2 text-[18px] text-blue-600 sm:text-xl">
-        <div className="flex items-center">
+      <div className="font-semibold sm:mt-16 items-center flex justify-between w-full px-0.5 text-[18px] text-blue-600 sm:text-xl">
+        <div className="flex items-center min-w-[70px] rounded-[6px] bg-blue-100 px-2 py-[0.5px]">
           <GiCardRandom />
-          <span className="ml-2 bg-blue-300 px-2.5 py-[0.5px] rounded-[6px]">
+          <span className="ml-2  px-1 py-[0.5px] rounded-[6px]">
             {tryCount}
           </span>
         </div>
-        <div className="">
+        <div className="bg-blue-100 px-1  min-w-[85px] py-[0.5px] rounded-[6px]">
           {showTimer && <Timer />}
         </div>
       </div>
-      <div className="w-full h-3 bg-blue-200 rounded-full">
+      <div className="w-full h-3 bg-blue-100 rounded-full">
         <div className={`bg-blue-400 progress-sign h-full rounded-full`}
           style={{
             width: `${progress}%`
@@ -300,7 +303,7 @@ export function PlayScreen({ end, toMainMenu }) {
       <>
         <div className={`${showRestartConfirmationModal ? "block" : "hidden"} fixed top-0 bg-black bg-opacity-70 w-screen h-screen duration-0`}></div>
 
-        <div className={`transition w-[90%] max-w-[400px] duration-500 bg-white p-8 rounded-lg top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[1] fixed text-center ${showRestartConfirmationModal ? " scale-1" : "scale-0"}`}>
+        <div className={`transition w-[90%] max-w-[400px] duration-500 bg-blue-100 p-8 rounded-lg top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[1] fixed text-center ${showRestartConfirmationModal ? " scale-1" : "scale-0"}`}>
           <h2 className="text-2xl font-bold mb-4">Restart Game</h2>
           <p className="text-gray-600 mb-6">Are you sure you want to restart the game?</p>
           <button
@@ -309,7 +312,7 @@ export function PlayScreen({ end, toMainMenu }) {
               setshowRestartConfirmationModal(false);
               reset();
             }}
-            className="text-white px-4 py-2 rounded mr-4 bg-gradient-to-b from-blue-300 to-blue-600"
+            className="text-white px-4 py-2 rounded mr-4 bg-blue-600"
           >
             Yes
           </button>
@@ -319,7 +322,7 @@ export function PlayScreen({ end, toMainMenu }) {
               setshowRestartConfirmationModal(false)
             }
             }
-            className="text-white px-4 py-2 rounded bg-gradient-to-b from-pink-300 to-pink-600"
+            className="text-white px-4 py-2 rounded bg-red-600"
           >
             No
           </button>
@@ -330,7 +333,7 @@ export function PlayScreen({ end, toMainMenu }) {
       <>
         <div className={`${showConfirmationModal ? "block" : "hidden"} absolute bg-black bg-opacity-70 w-screen h-screen duration-0`}></div>
 
-        <div className={`transition duration-500 bg-white p-8 rounded-lg fixed text-center ${showConfirmationModal ? " scale-1" : "scale-0"}`}>
+        <div className={`transition duration-500 bg-blue-100 p-8 rounded-lg fixed text-center ${showConfirmationModal ? " scale-1" : "scale-0"}`}>
           <h2 className="text-2xl font-bold mb-4">Exit Game</h2>
           <p className="text-gray-600 mb-6">Are you sure you want to exit the game?</p>
           <button
@@ -339,7 +342,7 @@ export function PlayScreen({ end, toMainMenu }) {
               setShowConfirmationModal(false);
               toMainMenu();
             }}
-            className="text-white px-4 py-2 rounded mr-4 bg-gradient-to-b from-blue-300 to-blue-600"
+            className="text-white px-4 py-2 rounded mr-4 bg-blue-600"
           >
             Yes
           </button>
@@ -348,7 +351,7 @@ export function PlayScreen({ end, toMainMenu }) {
               PlayClickSound();
               setShowConfirmationModal(false)
             }}
-            className="text-white px-4 py-2 rounded bg-gradient-to-b from-pink-300 to-pink-600"
+            className="text-white px-4 py-2 rounded bg-red-600"
           >
             No
           </button>
@@ -372,7 +375,7 @@ export function RestartModal({ onRestart, onMainMenu, RestartModalVisible, stopb
     if (RestartModalVisible) {
       stopbgMusic()
       if (didBeatBestTime && didBeatBestScore) {
-        setMessage({ header: "Congratulations! 🥳", comment: "You're the fastest and most brilliant!" });
+        setMessage({ header: "Congratulations! 🥳", comment: "You've set a new best time and score!" });
         localStorage.setItem("bestTime", currentTime.minutes * 60 + currentTime.seconds);
         localStorage.setItem("highScore", currentScore);
       } else if (didBeatBestTime) {
@@ -391,18 +394,18 @@ export function RestartModal({ onRestart, onMainMenu, RestartModalVisible, stopb
   };
 
   return (
-    <div className={`bg-white p-8 rounded-lg text-center`}>
+    <div className={`bg-blue-100 p-8 rounded-lg text-center`}>
       <h2 className="text-2xl font-bold mb-4">{message.header}</h2>
       <p className="text-gray-600 mb-6">{message.comment}</p>
       <button
         onClick={handleRestart}
-        className="text-white px-4 py-2 rounded mr-4 bg-gradient-to-b from-blue-300 to-blue-600"
+        className="text-white px-4 py-2 rounded mr-4 bg-blue-600"
       >
         Restart
       </button>
       <button
         onClick={onMainMenu}
-        className="text-white px-4 py-2 rounded bg-gradient-to-b from-pink-300 to-pink-600"
+        className="text-white px-4 py-2 rounded bg-red-600"
       >
         Main Menu
       </button>

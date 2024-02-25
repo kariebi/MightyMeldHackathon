@@ -41,7 +41,7 @@ function App() {
 
   return (
     <>
-      <div className="flex justify-center items-center w-screen h-screen">
+      <div className="flex justify-center bg-blue-600 items-center w-screen h-screen">
         {gameState === "start" && (
           <StartScreen
             start={handleStart}
