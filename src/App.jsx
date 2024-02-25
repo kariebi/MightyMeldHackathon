@@ -23,6 +23,11 @@ function App() {
     setShowRestartModal(false);
   };
 
+const handleStart=()=>{
+  PlayBackgroundSong();
+  setGameState("play")
+}
+  
   const handleEnd = () => {
     setShowRestartModal(true);
     stop();
@@ -33,10 +38,7 @@ function App() {
       <div className="flex justify-center items-center w-screen h-screen">
         {gameState === "start" && (
           <StartScreen
-            start={() => {                   
-             setGameState("play");
-              }}
-            playBackgroundSong={playBackgroundSong}
+            start={handleStart}
             className="I cannot convert any existing Tailwind styles since there is no specific class or element provided."
           />
         )}
