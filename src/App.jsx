@@ -33,10 +33,10 @@ function App() {
       <div className="flex justify-center items-center w-screen h-screen">
         {gameState === "start" && (
           <StartScreen
-            start={() => {
-             playBackgroundSong();              
+            start={() => {                   
              setGameState("play");
               }}
+            playBackgroundSong={playBackgroundSong}
             className="I cannot convert any existing Tailwind styles since there is no specific class or element provided."
           />
         )}
