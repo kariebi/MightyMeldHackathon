@@ -25,9 +25,8 @@ export const possibleTileContents = [
   icons.GiOpenBook,
 ];
 
-export function StartScreen({ start, PlayBackgroundSound }) {
+export function StartScreen({ start, PlayBackgroundSound, intropage,setintropage }) {
   const [PlayClickSound] = useSound(mouseclickSound, { volume: 0.5 })
-  const [intropage,setintropage]=useState(true);
 
 const handleintro=()=>{
   PlayClickSound();
