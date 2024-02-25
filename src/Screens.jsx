@@ -25,10 +25,17 @@ export const possibleTileContents = [
   icons.GiOpenBook,
 ];
 
-export function StartScreen({ start }) {
+export function StartScreen({ start, PlayBackgroundSound }) {
   const [PlayClickSound] = useSound(mouseclickSound, { volume: 0.5 })
-  
+  const [intropage,setintropage]=useState(true);
+
+const handleintro=()=>{
+  PlayBackgroundSound();
+  setintropage(false)
+}
   return (
+    <>
+      {intropage &&  <div className="w-full h-full flex items-center justify-center" onClick={()=>{handleintro}}>Introducing...</div>}
     <div className="flex flex-col bg-pink-100 text-pink-500 justify-center text-center items-center rounded-xl w-[300px] sm:w-[400px]  sm:text-lg sm:h-[400px] font-semibold h-[300px] gap-[16px]">
       <h1 className="font-semibold text-3xl sm:text-[40px]">
         Memory
@@ -46,6 +53,7 @@ export function StartScreen({ start }) {
         Play
       </button>
     </div>
+    </>
   );
 }
 
