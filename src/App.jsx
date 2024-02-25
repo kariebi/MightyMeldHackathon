@@ -6,7 +6,7 @@ import { useGame } from "./context/GameContext";
 
 function App() {
   const { bgMute , setCurrentTime } = useGame()
-  const [gameState, setGameState] = useState("start");
+  const [gameState, setGameState] = useState("start"); 
   const [showRestartModal, setShowRestartModal] = useState(false);
   const [restartstate, setRestartState] = useState(false);
   const [playBackgroundSong, { stop, isPlaying }] = useSound(backgroundSong, { volume:!bgMute? 0.5:0, loop: true });

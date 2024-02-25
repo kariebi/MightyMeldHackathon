@@ -49,7 +49,7 @@ export function Tile({ content: Content, flip, state, size }) {
           <Back className={`flex rounded-md p-2.5 justify-center items-center w-full h-full bg-blue-600 text-center`} />
         )}
         {state === "flipped" && (
-          <Front className={`flex justify-center p-2.5  rounded-md items-center w-full h-full bg-blue-400 text-white`}>
+          <Front className={`flex justify-center p-2.5  rounded-md items-center w-full h-full bg-blue-500 text-white`}>
             <Content style={commonStyles} />
           </Front>
         )}
