@@ -25,7 +25,7 @@ function App() {
 
 const handleStart=()=>{
   playBackgroundSong();
-  setGameState("play")
+ // setGameState("play")
 }
   
   const handleEnd = () => {
