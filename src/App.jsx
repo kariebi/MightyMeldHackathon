@@ -26,6 +26,7 @@ function App() {
   };
 
   const handleStart = () => {
+    stop()
     setCurrentTime({ minutes: 0, seconds: 0 })
     if (!isPlaying) {
       playBackgroundSong();
